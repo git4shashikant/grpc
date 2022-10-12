@@ -1,0 +1,25 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package com.grpc;
+
+import "google/protobuf/timestamp.proto";
+
+message StockRequest {
+  string tickerSymbol = 1;
+  string companyName = 2;
+}
+
+message StockResponse {
+  string tickerSymbol = 1;
+  double stockPrice = 2;
+  google.protobuf.Timestamp timestamp = 3;
+}
+
+service StockService {
+  /* server side streaming */
+  rpc getTickerPriceStreamResponse(StockRequest) returns (stream StockResponse);
+  /* client side streaming */
+  rpc getAverageTickerPrice(stream StockRequest) returns (StockResponse);
+  /* bidirectional streaming */
+  rpc getTickerPriceStreamRequestResponse(stream StockRequest) returns (stream StockResponse);
+}

@@ -36,8 +36,11 @@ public class GrpcClient {
     public static void main(String[] args) throws InterruptedException {
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 8080).usePlaintext().build();
         GrpcClient grpcClient = new GrpcClient(channel);
+
+        System.out.println("*************************hello with error response******************************");
+        grpcClient.hello("123", "456");
         System.out.println("**********************************hello*****************************************");
-        grpcClient.hello();
+        grpcClient.hello("Shashi Kant", "Sharma");
         System.out.println("**************************tickerPriceStreamResponse******************************");
         grpcClient.tickerPriceStreamResponse();
         System.out.println("*****************************getAverageTickerPrice*******************************");
@@ -47,13 +50,17 @@ public class GrpcClient {
         channel.shutdownNow();
     }
 
-    public void hello() {
-        HelloResponse helloResponse = helloServiceBlockingStub.hello(HelloRequest.newBuilder()
-                .setFirstName("Shashi Kant")
-                .setLastName("Sharma")
-                .build());
+    public void hello(String firstName, String lastName) {
+        try {
+            HelloResponse helloResponse = helloServiceBlockingStub.hello(HelloRequest.newBuilder()
+                    .setFirstName(firstName)
+                    .setLastName(lastName)
+                    .build());
 
-        System.out.printf("HelloResponse: %s%n", helloResponse.getGreeting());
+            System.out.printf("HelloResponse: %s%n", helloResponse);
+        } catch (Exception exception) {
+            System.out.println(exception);
+        }
     }
 
     public void tickerPriceStreamResponse() {
